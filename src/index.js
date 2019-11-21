@@ -5,6 +5,8 @@ const cors = require("cors");
 const { verify } = require("jsonwebtoken");
 const { hash, compare } = require("bcryptjs");
 
+const { fakeDB } = require("./fakeDB.js");
+
 // 2. Login a user
 // 3. Logout a user
 // 4. Setup a protected route
@@ -36,8 +38,21 @@ server.post("/register", async (req, res) => {
 
   try {
     // 1. Check if user exist
-
+    const user = fakeDB.find(user => user.email === email);
+    if (user) throw new Error("User alredy exist");
+    // 2. If not user exist, hash the password
     const hashedPassword = await hash(password, 10);
-    console.log(hashedPassword);
-  } catch (err) {}
+    // 3. Insert the user in "database"
+    fakeDB.push({
+      id: fakeDB.length,
+      email,
+      password: hashedPassword
+    });
+    res.send({ message: 'User Created' });    
+    console.log(fakeDB);
+  } catch (err) {
+      res.send({
+          error: `${err.message}`
+      })
+  }
 });
