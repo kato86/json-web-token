@@ -26,3 +26,7 @@ server.use(
 // Needed to be able to read body data
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
+
+server.listen(process.env.PORT, () =>
+  console.log(`Server listenig on port ${process.env.PORT}`)
+);
