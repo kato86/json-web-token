@@ -13,9 +13,37 @@ function App() {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
 
-  const logOutCallback = async () => {};
+  const logOutCallback = async () => {
+    await fetch("http://localhost:4000/logout", {
+      method: "POST",
+      credentials: "include"
+    });
+    // Clear user from content
+    setUser({});
+    // Navigate back to startpage
+    navigate("/");
+  };
+  // First thing, get a new accesstoken if a refreshtoken exist
+  useEffect(() => {
+    async function checkRefreshToken() {
+      const result = await (
+        await fetch("http://localhost:4000/refresh_token", {
+          method: "POST",
+          credentials: "include", // Needed to include the cookie
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+      ).json();
+      setUser({
+        accesstoken: result.accesstoken
+      });
+      setLoading(false);
+    }
+    checkRefreshToken();
+  }, []);
 
-  useEffect(() => {}, []);
+  if (loading) return <div>Loading...</div>;
 
   return (
     <UserContext.Provider value={[user, setUser]}>
