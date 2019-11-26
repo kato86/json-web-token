@@ -12,9 +12,8 @@ const {
 } = require("./tokens.js");
 
 const { fakeDB } = require("./fakeDB.js");
+const { isAuth } = require("./isAuth.js");
 
-// 3. Logout a user
-// 4. Setup a protected route
 // 5. Get a new accestoken with a refresh token
 
 const server = express();
@@ -79,6 +78,30 @@ server.post("/login", async (req, res) => {
     // 5. Send token. Refreshtoken as a cookie and accesstoken as a regular response
     sendRefreshToken(res, refreshtoken);
     sendAccessToken(req, res, accesstoken);
+  } catch (err) {
+    res.send({
+      error: `${err.message}`
+    });
+  }
+});
+
+// 3. Logout a user
+server.post("/logout", (_req, res) => {
+  res.clearCookie("refreshtoken");
+  return res.send({
+    message: "Logged out"
+  });
+});
+
+// 4. Setup a protected route
+server.post("/protected", async (req, res) => {
+  try {
+    const userId = isAuth(req);
+    if (userId !== null) {
+      res.send({
+        data: "This is protected data."
+      });
+    }
   } catch (err) {
     res.send({
       error: `${err.message}`
