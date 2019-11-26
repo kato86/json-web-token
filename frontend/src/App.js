@@ -47,7 +47,7 @@ function App() {
 
   return (
     <UserContext.Provider value={[user, setUser]}>
-      <div className="App">
+      <div className="app">
         <Navigation logOutCallback={logOutCallback} />
         <Router id="router">
           <Login path="login" />
