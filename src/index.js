@@ -43,6 +43,7 @@ server.post("/register", async (req, res) => {
     if (user) throw new Error("User alredy exist");
     // 2. If not user exist, hash the password
     const hashedPassword = await hash(password, 10);
+    console.log(hashedPassword);
     // 3. Insert the user in "database"
     fakeDB.push({
       id: fakeDB.length,
@@ -70,14 +71,14 @@ server.post("/login", async (req, res) => {
     const valid = await compare(password, user.password);
     if (!valid) throw new Error("Password not correct");
     // 3. Create Refresh - and Accesstoken
-    const accestoken = createAccessToken(user.id);
+    const accesstoken = createAccessToken(user.id);
     const refreshtoken = createRefreshToken(user.id);
     // 4. Put the refreshtoken in the "database"
     user.refreshtoken = refreshtoken;
     console.log(fakeDB);
     // 5. Send token. Refreshtoken as a cookie and accesstoken as a regular response
     sendRefreshToken(res, refreshtoken);
-    sendAccessToken(res, req, accestoken);
+    sendAccessToken(req, res, accesstoken);
   } catch (err) {
     res.send({
       error: `${err.message}`

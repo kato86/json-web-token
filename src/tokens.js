@@ -1,7 +1,7 @@
 const { sign } = require("jsonwebtoken");
 
 const createAccessToken = userId => {
-  return sign({ userId }, process.env.ACCES_TOKEN_SECRET, {
+  return sign({ userId }, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: "15m"
   });
 };
@@ -12,9 +12,9 @@ const createRefreshToken = userId => {
   });
 };
 
-const sendAccessToken = (res, req, accestoken) => {
+const sendAccessToken = (req, res, accesstoken) => {
   res.send({
-    accestoken,
+    accesstoken,
     email: req.body.email
   });
 };
